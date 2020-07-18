@@ -10989,3 +10989,12 @@ body {
   float: right;
 }
 
+.owner {
+  color: red;
+}
+
+.user {
+  float: right;
+  font-weight: 600;
+}
+

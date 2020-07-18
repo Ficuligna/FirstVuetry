@@ -1980,6 +1980,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1992,17 +1996,38 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: {
+    selectvalue: String,
     new_id: Number,
     user: String,
     creator: String,
     id: Number,
     name: String,
-    stored: String
+    stored: String,
+    yarchived: String,
+    archivedbyuser: String,
+    filterbyname: String
   },
   methods: {
-    // store_task(condition){
-    //   this.storeTask = condition;
-    // },
+    filter_by_title: function filter_by_title() {
+      if (this.filterbyname == "" || this.dataName.includes(this.filterbyname) || this.creator.includes(this.filterbyname)) {
+        console.log("vero");
+        return true;
+      } else {
+        console.log("falso");
+        return false;
+      }
+    },
+    get_select: function get_select() {
+      if (this.selectvalue == " ") {
+        return true;
+      } else {
+        return this.selectvalue == this.archivedbyuser;
+      }
+    },
+    check_creator: function check_creator() {},
+    owner: function owner(field) {
+      return this.creator === field;
+    },
     is_stored: function is_stored(answer) {
       return this.storeTask == answer;
     },
@@ -2014,7 +2039,7 @@ __webpack_require__.r(__webpack_exports__);
         name: this.dataName
       };
       axios.post("/store", task).then(function (response) {
-        console.log(response);
+        // console.log(response);
         _this.storeTask = "yes";
       })["catch"](function (err) {
         alert("You are Unauthorized");
@@ -2047,8 +2072,7 @@ __webpack_require__.r(__webpack_exports__);
         name: this.dataName
       };
       axios.post("/update/" + id, task).then(function (response) {
-        console.log(response);
-
+        // console.log(response);
         _this.edit_field("");
       })["catch"](function (err) {
         alert("You are Unauthorized");
@@ -2070,15 +2094,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("/destroy/" + id).then(function (response) {
         if (response["status"] == 200) {
           _this.destroied = true;
-        }
+        } // console.log(response);
 
-        console.log(response);
       })["catch"](function (err) {
         if (err) {
           alert("You are Unauthorized");
-        }
+        } // console.log(err);
 
-        console.log(err);
       });
     },
     archive: function archive() {
@@ -2098,8 +2120,6 @@ __webpack_require__.r(__webpack_exports__);
         if (response["status"] == 200) {
           _this.archived = true;
         }
-
-        console.log(response);
       })["catch"](function (err) {
         if (err) {
           alert("You are Unauthorized");
@@ -37763,8 +37783,13 @@ var render = function() {
         {
           name: "show",
           rawName: "v-show",
-          value: !_vm.destroied && !_vm.archived,
-          expression: "!destroied && !archived"
+          value:
+            !_vm.destroied &&
+            !_vm.archived &&
+            _vm.get_select() &&
+            _vm.filter_by_title(),
+          expression:
+            "!destroied && !archived && get_select() && filter_by_title()"
         }
       ],
       staticClass: "container"
@@ -37775,7 +37800,17 @@ var render = function() {
           _c("div", { staticClass: "card" }, [
             _c("div", { staticClass: "card-header" }, [
               _vm.id
-                ? _c("span", [_vm._v("this is the task n° " + _vm._s(_vm.id))])
+                ? _c(
+                    "span",
+                    {
+                      on: {
+                        click: function($event) {
+                          return _vm.filter_by_title()
+                        }
+                      }
+                    },
+                    [_vm._v("this is the task n° " + _vm._s(_vm.id))]
+                  )
                 : _c("span", [
                     _vm._v("this is a new task " + _vm._s(_vm.new_id))
                   ]),
@@ -37783,6 +37818,10 @@ var render = function() {
               _vm.creator
                 ? _c("span", [_vm._v("created by: " + _vm._s(_vm.creator))])
                 : _c("span", [_vm._v("created by: " + _vm._s(_vm.user))]),
+              _vm._v(" "),
+              _vm.owner(_vm.user)
+                ? _c("span", { staticClass: "owner" }, [_vm._v("Owner")])
+                : _vm._e(),
               _vm._v(" "),
               !_vm.is_stored("no")
                 ? _c("div", { staticClass: "actionbutt" }, [
@@ -37902,31 +37941,33 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
-              _c("div", { staticClass: "completed" }, [
-                _vm._v("\n                      Completed: "),
-                _c("input", {
-                  attrs: { type: "checkbox", name: "completed", value: "" },
-                  on: { click: _vm.checked_function }
-                }),
-                _c("br"),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    directives: [
+              !_vm.yarchived
+                ? _c("div", { staticClass: "completed" }, [
+                    _vm._v("\n                      Completed: "),
+                    _c("input", {
+                      attrs: { type: "checkbox", name: "completed", value: "" },
+                      on: { click: _vm.checked_function }
+                    }),
+                    _c("br"),
+                    _vm._v(" "),
+                    _c(
+                      "button",
                       {
-                        name: "show",
-                        rawName: "v-show",
-                        value: _vm.checked,
-                        expression: "checked"
-                      }
-                    ],
-                    attrs: { type: "button", name: "button" },
-                    on: { click: _vm.archive }
-                  },
-                  [_vm._v("archive")]
-                )
-              ])
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.checked,
+                            expression: "checked"
+                          }
+                        ],
+                        attrs: { type: "button", name: "button" },
+                        on: { click: _vm.archive }
+                      },
+                      [_vm._v("archive")]
+                    )
+                  ])
+                : _vm._e()
             ])
           ])
         ])
@@ -50164,7 +50205,9 @@ function init() {
     el: '#app',
     data: function data() {
       return {
-        tasks: []
+        tasks: [],
+        selected: " ",
+        message: ""
       };
     },
     methods: {

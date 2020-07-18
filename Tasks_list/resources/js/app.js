@@ -15,7 +15,9 @@ function init(){
     el: '#app',
     data () {
       return {
-        tasks: []
+        tasks: [],
+        selected: " ",
+        message: ""
       }
     },
     methods: {

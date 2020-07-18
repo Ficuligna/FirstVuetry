@@ -10,6 +10,7 @@ Route::post('/destroy/{id}', 'UserController@delete')->name('destroy');
 Route::post('/update/{id}', 'UserController@update')->name('update');
 Route::post('/archive/{id}', 'UserController@archive')->name('archive');
 Route::post('/store', 'UserController@store')->name('create');
+Route::get('/archived', 'UserController@get_archived')->name('getArchived');
 
 Auth::routes();
 

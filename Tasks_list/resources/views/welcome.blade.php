@@ -2,9 +2,11 @@
 
 @section('main_section')
 
-
+  @auth
+  <span class="user">{{$user}}</span>    
+  @endauth
   <div id="app">
-
+    <a href="/archived">Go to archived tasks</a>
     <button @click="addTask()">Add new task</button>
     <div v-for="(task, index) in tasks" :key="index">
       <task-component

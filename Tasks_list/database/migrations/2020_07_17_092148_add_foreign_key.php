@@ -18,6 +18,10 @@ class AddForeignKey extends Migration
               ->references('id')
               ->on('users')
               ->onDelete('cascade');
+        $table->foreign('completed_by_id', 'creator')
+              ->references('id')
+              ->on('users')
+              ->onDelete('cascade');
 
       });
     }
@@ -31,6 +35,7 @@ class AddForeignKey extends Migration
       Schema::table('tasks', function (Blueprint $table) {
 
         $table->dropForeign('user');
+        $table->dropForeign('creator');
       });
     }
 }

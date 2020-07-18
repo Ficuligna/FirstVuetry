@@ -42,9 +42,11 @@ class UserController extends Controller
   }
 
   public function archive($id){
+    $user = Auth::user();
 
     $task = Task::findOrFail($id);
     $task["completed"] = 1;
+    $task["completed_by_id"] = $user -> id;
     $task->save();
 
     return response() -> json("task n° " . $id . " has been archived",200);
@@ -63,5 +65,17 @@ class UserController extends Controller
 
     return response() -> json("new task is added", 200);
 
+  }
+  public function get_archived(){
+    $user = Auth::user() -> name;
+    $tasks = Task::all()-> where("completed" , 1);
+    $users = [];
+    foreach ($tasks as $task) {
+      if (!in_array($task -> user, $users)) {
+        $users[] = $task -> user;
+      }
+    }
+
+    return view("archived", compact("tasks", "user","users"));
   }
 }
